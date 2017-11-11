@@ -2,17 +2,30 @@
     'use strict';
     var FORM_SELECTOR = '[data-coffee-order="form"]';
     var SLIDER_SELECTOR = '[name="strength"]';
+    var CHECKLIST_SELECTOR = '[data-coffee-order="checklist"]';
     var App = window.App;
     var Truck = App.Truck;
     var DataStore = App.DataStore;
+    var Validation = App.Validation;
     var FormHandler = App.FormHandler;
-
+    var CheckList = App.CheckList;
     var myTruck = new Truck('ncc-1701', new DataStore());
     window.myTruck = myTruck;
 
+    // 订单列表绑定点击事件
+    var checkList = new CheckList(CHECKLIST_SELECTOR);
+    checkList.addClickHandler(myTruck.deliverOrder.bind(myTruck));
+
+    // form绑定submit事件
     var formHandler = new FormHandler(FORM_SELECTOR);
-    formHandler.addSubmitHandler(myTruck.createOrder.bind(myTruck));
-    console.log(formHandler);
+    formHandler.addSubmitHandler(function(data) {
+        myTruck.createOrder.call(myTruck, data);
+        checkList.addRow.call(checkList, data);
+    });
+
+    formHandler.addInputHandler(Validation.isCompanyEmail);
+    // formHandler.addSubmitHandler(myTruck.createOrder.bind(myTruck));
+    // console.log(formHandler);
 
     // document.querySelector(SLIDER_SELECTOR).addEventListener('change', function(event) {
     //     console.log(event.target.value);
