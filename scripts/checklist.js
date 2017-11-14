@@ -44,15 +44,15 @@
             clicks++; //count clicks
             if (clicks === 1) {
                 var email = event.target.value;
-                this.greyRow(email);
-
                 timer = setTimeout(function() {
                     //after action performed, reset counter
                     clicks = 0;
                     // 1s后完成订单，删除该行
                     setTimeout(function() {
-                        this.removeRow(email);
-                        fn(email);
+                        fn(email).then(function(){
+                            this.greyRow(email);
+                            this.removeRow(email);
+                        }.bind(this));
                     }.bind(this), 1000);
                 }.bind(this), DELAY);
             } else {
